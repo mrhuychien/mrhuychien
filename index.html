@@ -1,0 +1,157 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khóa Học AI - LuyenAI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* Custom styles */
+        .hero-bg {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        }
+        .cta-button {
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: scale(1.05);
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="hero-bg text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Khóa Học AI - LuyenAI</h1>
+            <p class="text-lg md:text-xl mb-6 max-w-2xl mx-auto">
+                Khám phá trí tuệ nhân tạo với khóa học thực tiễn, giúp bạn làm chủ AI từ cơ bản đến nâng cao!
+            </p>
+            <a href="#register" class="cta-button inline-block bg-blue-600 text-white py-3 px-8 rounded-full text-lg font-semibold">Đăng Ký Ngay</a>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Về Khóa Học</h2>
+            <p class="text-lg text-gray-700 text-center max-w-3xl mx-auto">
+                Khóa học LuyenAI được thiết kế để giúp bạn hiểu và ứng dụng trí tuệ nhân tạo trong thực tế. 
+                Từ machine learning, deep learning đến xử lý ngôn ngữ tự nhiên (NLP), chúng tôi cung cấp lộ trình học tập rõ ràng, 
+                bài giảng dễ hiểu và dự án thực tế để bạn sẵn sàng cho kỷ nguyên AI.
+            </p>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Bạn Sẽ Nhận Được Gì?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <i class="fas fa-brain text-3xl text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Kiến Thức Sâu Rộng</h3>
+                    <p class="text-gray-600">Học từ cơ bản đến nâng cao về AI, machine learning, và deep learning.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <i class="fas fa-laptop-code text-3xl text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Dự Án Thực Tế</h3>
+                    <p class="text-gray-600">Thực hành với các dự án AI như chatbot, phân tích dữ liệu, và nhận diện hình ảnh.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                    <i class="fas fa-users text-3xl text-blue-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Cộng Đồng Hỗ Trợ</h3>
+                    <p class="text-gray-600">Tham gia cộng đồng học viên, nhận hỗ trợ từ giảng viên và bạn học.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Register Section -->
+    <section id="register" class="py-16 bg-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-8">Đăng Ký Khóa Học</h2>
+            <p class="text-lg text-gray-700 mb-6">Hãy để lại thông tin để nhận tư vấn chi tiết về khóa học!</p>
+            <form action="https://formspree.io/f/[your-form-id]" method="POST" class="max-w-lg mx-auto">
+                <div class="mb-4">
+                    <input type="text" name="name" placeholder="Họ và Tên" class="w-full p-3 border rounded-lg" required>
+                </div>
+                <div class="mb-4">
+                    <input type="email" name="email" placeholder="Email" class="w-full p-3 border rounded-lg" required>
+                </div>
+                <div class="mb-4">
+                    <input type="tel" name="phone" placeholder="Số Điện Thoại" class="w-full p-3 border rounded-lg">
+                </div>
+                <button type="submit" class="cta-button bg-blue-600 text-white py-3 px-8 rounded-full text-lg font-semibold">Gửi Đăng Ký</button>
+            </form>
+            <p class="text-gray-600 mt-4">Hoặc liên hệ qua email: <a href="mailto:[email-cua-ban]" class="text-blue-600 hover:underline">[email-cua-ban]</a></p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p>© 2025 LuyenAI. All rights reserved.</p>
+            <div class="mt-4 flex justify-center space-x-4">
+                <a href="https://github.com/[ten-nguoi-dung]" target="_blank" class="text-2xl hover:text-gray-300"><i class="fab fa-github"></i></a>
+                <a href="https://linkedin.com/in/[ten-linkedin]" target="_blank" class="text-2xl hover:text-gray-300"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:[email-cua-ban]" class="text-2xl hover:text-gray-300"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for smooth scrolling -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
